@@ -4,7 +4,7 @@
     "description": "Antiaris Server",
     "main": "app.js",
     "scripts": {
-        "server": "node --harmony app.js",
+        "start": "node --harmony app.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
