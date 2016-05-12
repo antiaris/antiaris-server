@@ -12,19 +12,14 @@
 require('babel-core/register')({
     presets: ['es2015-node5', 'stage-3']
 });
+const path = require('path');
+const Antiaris = require('./kernel/');
 
-const Koa = require('koa');
-const Router = require('koa-router');
-const app = new Koa();
-
-const rootRouter = new Router();
-const projects = ['demo'];
-projects.forEach(projectName => {
-    const demoRouter = new Router();
-    require(`./projects/${projectName}/`)(demoRouter);
-    rootRouter.use(`/${projectName}`, demoRouter.routes(), demoRouter.allowedMethods());
-    app.use(rootRouter.routes());
+const antiaris = new Antiaris({
+    appDir: path.join(__dirname, 'app')
 });
+
+const app = antiaris.bootstrap();
 
 console.log('Listening at 4098');
 app.listen(4098);

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 tieba.baidu.com
+ * Copyright (C) 2016 yanni4night.com
  * index.js
  *
  * changelog
@@ -9,10 +9,13 @@
  * @version 1.0.0
  * @since 1.0.0
  */
+
 module.exports = router => {
-    router.get('/', (ctx, next) => {
-        ctx.body = ctx.url;
-        return next();
+    router.get('/get', (ctx, next) => {
+        return Promise.resolve(123).then(n => {
+            ctx.body = n;
+            next();
+        });
     });
 
     router.get('/show', (ctx, next) => {
