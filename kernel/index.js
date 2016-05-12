@@ -17,6 +17,7 @@ const Router = require('koa-router');
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 const EventEmitter = require('events');
 
 class Antiaris extends EventEmitter {
@@ -24,6 +25,7 @@ class Antiaris extends EventEmitter {
         const opts = _.extend({}, options);
         const {
             appDir,
+            middlewareDir,
             app
         } = opts;
 
@@ -34,6 +36,26 @@ class Antiaris extends EventEmitter {
             configurable: false,
             value: app || new Koa()
         });
+
+        // 前导变量
+        this.app.use((ctx, next) => {
+            const appName = url.parse(ctx.request.url).pathname.replace(/(^\/|\/$)/m, '').split(/\//)[0];
+            ctx.__appName = appName;
+            return next();
+        });
+
+        this.emit('before-register-middlewares');
+
+        // 加载 middleware，有框架定义
+        fs.readdirSync(middlewareDir).forEach(dir => {
+            const subPath = path.join(middlewareDir, dir);
+            const stat = fs.statSync(subPath);
+            if (stat.isDirectory() && fs.existsSync(path.join(subPath, 'index.js'))) {
+                this.app.use(require(subPath));
+            }
+        });
+
+        this.emit('after-register-middlewares');
 
         const rootRouter = new Router();
 

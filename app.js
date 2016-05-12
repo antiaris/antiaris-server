@@ -18,7 +18,8 @@ const antiaris = require('./kernel/');
 const conf = require('./conf/');
 
 const app = antiaris.bootstrap({
-    appDir: path.join(__dirname, 'app')
+    appDir: path.join(__dirname, 'app'),
+    middlewareDir: path.join(__dirname, 'middleware')
 });
 
 console.log(`Listening at ${conf.PORT}`);
