@@ -14,6 +14,7 @@
 
 const Koa = require('koa');
 const Router = require('koa-router');
+const serve = require('koa-static');
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
@@ -36,6 +37,8 @@ class Antiaris extends EventEmitter {
             configurable: false,
             value: app || new Koa()
         });
+
+        this.app.use(serve(appDir));
 
         // 前导变量
         this.app.use((ctx, next) => {

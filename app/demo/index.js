@@ -11,11 +11,8 @@
  */
 
 module.exports = router => {
-    router.get('/get', (ctx, next) => {
-        return Promise.resolve(123).then(n => {
-            ctx.body = n;
-            next();
-        });
+    router.get('/', (ctx, next) => {
+       ctx.body = '<html><head><link rel="stylesheet" href="/demo/static/index.css" /></head><body><h1>Hello</h1></body></html>';
     });
 
     router.get('/show', (ctx, next) => {
