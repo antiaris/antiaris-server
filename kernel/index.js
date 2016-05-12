@@ -14,7 +14,8 @@
 
 const Koa = require('koa');
 const Router = require('koa-router');
-const serve = require('koa-static');
+const serveStatic = require('koa-static');
+const favicon = require('koa-favicon');
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
@@ -26,6 +27,7 @@ class Antiaris extends EventEmitter {
         const opts = _.extend({}, options);
         const {
             appDir,
+            confDir,
             middlewareDir,
             app
         } = opts;
@@ -38,7 +40,8 @@ class Antiaris extends EventEmitter {
             value: app || new Koa()
         });
 
-        this.app.use(serve(appDir));
+        this.app.use(favicon(path.join(confDir , 'favicon.ico')));
+        this.app.use(serveStatic(appDir));
 
         // 前导变量
         this.app.use((ctx, next) => {

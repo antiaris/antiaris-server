@@ -19,6 +19,7 @@ const conf = require('./conf/');
 
 const app = antiaris.bootstrap({
     appDir: path.join(__dirname, 'app'),
+    confDir: path.join(__dirname, 'conf'),
     middlewareDir: path.join(__dirname, 'middleware')
 });
 
