@@ -10,13 +10,17 @@
  * @since 1.0.0
  */
 
+const React = require('react');
+const ReactDOMServer = require('react-dom/server');
+const Header = require('./server/header');
+
 module.exports = router => {
     router.get('/', (ctx, next) => {
        ctx.body = '<html><head><link rel="stylesheet" href="/demo/static/index.css" /></head><body><h1>Hello</h1></body></html>';
     });
 
     router.get('/show', (ctx, next) => {
-        ctx.body = ctx.url;
+        ctx.body = ReactDOMServer.renderToString(<Header title="Hello"/>);
         return next();
     });
 };
