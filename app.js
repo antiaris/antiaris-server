@@ -13,13 +13,11 @@ require('babel-core/register')({
     presets: ['es2015-node5', 'stage-3']
 });
 const path = require('path');
-const Antiaris = require('./kernel/');
+const antiaris = require('./kernel/');
 
-const antiaris = new Antiaris({
+const app = antiaris.bootstrap({
     appDir: path.join(__dirname, 'app')
 });
-
-const app = antiaris.bootstrap();
 
 console.log('Listening at 4098');
 app.listen(4098);
