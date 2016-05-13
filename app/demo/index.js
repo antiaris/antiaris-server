@@ -21,15 +21,15 @@ const env = nunjucks.configure(path.join(__dirname, 'views'), {
 });
 
 module.exports = router => {
-    router.get('/', (ctx, next) => {
-        ctx.body = '<html><head><link rel="stylesheet" href="/demo/static/index.css" /></head><body><h1>Hello</h1></body></html>';
+    router.get('/raw', (ctx, next) => {
+        ctx.body = '<!DOCTYPE html><html><head><link rel="stylesheet" href="/demo/static/index.css" /></head><body><h1>Hello</h1></body></html>';
         return next();
     });
 
-    router.get('/show', (ctx, next) => {
+    router.get('/react', (ctx, next) => {
         ctx.body = env.render('skeleton.tpl', {
             content: ReactDOMServer.renderToString( <Header title="Hello" /> )
-        })
+        });
         return next();
     });
 };
