@@ -27,8 +27,10 @@ module.exports = router => {
     });
 
     router.get('/react', (ctx, next) => {
+        const {css, js} = ctx;
         ctx.body = env.render('skeleton.tpl', {
-            content: ReactDOMServer.renderToString( <Header title="Hello" /> )
+            css: ctx.__resource.css,
+            content: ReactDOMServer.renderToString( <Header title="Hello" css={css} js={js} /> )
         });
         return next();
     });

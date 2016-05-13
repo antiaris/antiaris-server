@@ -40,13 +40,33 @@ class Antiaris extends EventEmitter {
             value: app || new Koa()
         });
 
-        this.app.use(favicon(path.join(confDir , 'favicon.ico')));
+        this.app.use(favicon(path.join(confDir, 'favicon.ico')));
         this.app.use(serveStatic(appDir));
 
         // 前导变量
         this.app.use((ctx, next) => {
             const appName = url.parse(ctx.request.url).pathname.replace(/(^\/|\/$)/m, '').split(/\//)[0];
+            // 应用名
             ctx.__appName = appName;
+
+            // 静态资源
+            ctx.__resource = {
+                css: [],
+                js: []
+            };
+
+            ctx.css = cssModule => {
+                if (ctx.__resource.css.indexOf(cssModule) === -1) {
+                    ctx.__resource.css.push(cssModule);
+                }
+            };
+
+            ctx.js = jsModule => {
+                if (ctx.__resource.js.indexOf(jsModule) === -1) {
+                    ctx.__resource.js.push(jsModule);
+                }
+            };
+
             return next();
         });
 
