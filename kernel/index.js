@@ -19,7 +19,6 @@ const favicon = require('koa-favicon');
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const url = require('url');
 const EventEmitter = require('events');
 
 class Antiaris extends EventEmitter {
@@ -43,49 +42,26 @@ class Antiaris extends EventEmitter {
         this.app.use(favicon(path.join(confDir, 'favicon.ico')));
         this.app.use(serveStatic(appDir));
 
-        // 前导变量
-        this.app.use((ctx, next) => {
-            const appName = url.parse(ctx.request.url).pathname.replace(/(^\/|\/$)/m, '').split(/\//)[0];
-            // 应用名
-            ctx.__appName = appName;
-
-            // 静态资源
-            ctx.__resource = {
-                css: [],
-                js: []
-            };
-
-            ctx.css = cssModule => {
-                if (ctx.__resource.css.indexOf(cssModule) === -1) {
-                    ctx.__resource.css.push(cssModule);
-                }
-            };
-
-            ctx.js = jsModule => {
-                if (ctx.__resource.js.indexOf(jsModule) === -1) {
-                    ctx.__resource.js.push(jsModule);
-                }
-            };
-
-            return next();
-        });
-
-        this.emit('before-register-middlewares');
-
-        // 加载 middleware，有框架定义
-        fs.readdirSync(middlewareDir).forEach(dir => {
-            const subPath = path.join(middlewareDir, dir);
-            const stat = fs.statSync(subPath);
-            if (stat.isDirectory() && fs.existsSync(path.join(subPath, 'index.js'))) {
-                this.app.use(require(subPath));
+        const loadCustomMiddleWare = midPath => {
+            const stat = fs.statSync(midPath);
+            if (stat.isDirectory() && fs.existsSync(path.join(midPath, 'index.js'))) {
+                this.app.use(require(midPath));
             }
+        };
+
+        // 加载 middleware，由内核定义
+        const kernelMiddleDir = path.join(__dirname, 'middleware');
+        fs.readdirSync(kernelMiddleDir).forEach(dir => {
+           loadCustomMiddleWare(path.join(kernelMiddleDir, dir));
+            
         });
 
-        this.emit('after-register-middlewares');
+        // 加载 middleware，由框架定义
+        fs.readdirSync(middlewareDir).forEach(dir => {
+            loadCustomMiddleWare(path.join(middlewareDir, dir));
+        });
 
         const rootRouter = new Router();
-
-        this.emit('before-register-routers');
 
         // 注册 APP 自动路由
         fs.readdirSync(appDir).forEach(dir => {
@@ -100,8 +76,6 @@ class Antiaris extends EventEmitter {
         });
 
         this.app.use(rootRouter.routes());
-
-        this.emit('after-register-routers');
 
         return this.app;
     }
