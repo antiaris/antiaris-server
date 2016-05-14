@@ -27,10 +27,10 @@ module.exports = router => {
     });
 
     router.get('/react', (ctx, next) => {
-        const {css, js} = ctx;
+        const {appendCss, appendScript} = ctx;
         ctx.body = env.render('skeleton.tpl', {
             css: ctx.comboCss(),
-            content: ReactDOMServer.renderToString( <Header title="Hello" css={css} js={js} /> )
+            content: ReactDOMServer.renderToString( <Header title="Hello" appendScript={appendScript} appendCss={appendCss} /> )
         });
         return next();
     });

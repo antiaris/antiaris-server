@@ -28,7 +28,7 @@ module.exports = (ctx, next) => {
             css: [],
             js: []
         }),
-        css: createFrozenProperty(cssModule => {
+        appendCss: createFrozenProperty(cssModule => {
             if (ctx.__resource.css.indexOf(cssModule) === -1) {
                 ctx.__resource.css.push(cssModule);
             }
@@ -36,12 +36,12 @@ module.exports = (ctx, next) => {
         comboCss: createFrozenProperty(() => {
             return ctx.__resource.css;
         }),
-        js: createFrozenProperty(jsModule => {
+        appendScript: createFrozenProperty(jsModule => {
             if (ctx.__resource.js.indexOf(jsModule) === -1) {
                 ctx.__resource.js.push(jsModule);
             }
         }),
-        comboJs: createFrozenProperty(() => {
+        comboScript: createFrozenProperty(() => {
             return ctx.__resource.js;
         })
     });

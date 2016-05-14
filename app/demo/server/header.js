@@ -15,9 +15,8 @@ const React = require('react');
 class Header extends React.Component {
     constructor(props) {
         super(props);
-        this.displayName = 'Header';
-        const {css, js} = props;
-        css('demo/static/index.css');
+        const {appendCss} = props;
+        appendCss('demo/static/index.css');
     }
     render() {
         const {title} = this.props;
