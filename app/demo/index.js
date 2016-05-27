@@ -12,9 +12,9 @@
 
 const React = require('react');
 const ReactDOMServer = require('react-dom/server');
-const Header = require('./server/header');
 const nunjucks = require('nunjucks');
 const path = require('path');
+const Nav = require('./component/nav/');
 
 const env = nunjucks.configure(path.join(__dirname, 'views'), {
     autoescape: true
@@ -26,11 +26,14 @@ module.exports = router => {
         return next();
     });
 
-    router.get('/react', (ctx, next) => {
-        const {appendCss, appendScript} = ctx;
+    router.get('/isomorphic', (ctx, next) => {
+        const {add} = ctx;
+        const ret = ReactDOMServer.renderToString( <Nav title="Hello" add={add} /> );
         ctx.body = env.render('skeleton.tpl', {
             css: ctx.comboCss(),
-            content: ReactDOMServer.renderToString( <Header title="Hello" appendScript={appendScript} appendCss={appendCss} /> )
+            script: ctx.comboScript(),
+            js: ctx.comboJs(),
+            content: ret
         });
         return next();
     });

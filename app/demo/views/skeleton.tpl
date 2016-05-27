@@ -14,5 +14,11 @@
     </head>
     <body>
     {{content | safe}}
+    {% for s in script %}
+        <script src="/{{c|safe}}"></script>
+    {% endfor %}
+    {% for j in js %}
+        <script src="/{{j|safe}}"></script>
+    {% endfor %}
     </body>
 </html>
