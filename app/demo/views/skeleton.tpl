@@ -13,7 +13,7 @@
         {% endfor %}
     </head>
     <body>
-    {{content | safe}}
+    <div id="react-dom">{{content | safe}}</div>
     {% for s in script %}
         <script src="/{{s|safe}}"></script>
     {% endfor %}

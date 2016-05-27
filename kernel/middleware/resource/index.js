@@ -26,6 +26,33 @@ module.exports = ({
     app,
     opts
 }) => {
+
+    function getResources(res) {
+        const ret = [];
+        const appName = res.split('/')[0];
+        const rmap = require(path.join(opts.appDir, appName,
+            'resource-map'));
+        if (rmap[res]) {
+            if (Array.isArray(rmap[res].deps)) {
+                rmap[res].deps.forEach(r => {
+                    let deps = getResources(r);
+                    ret.push(...deps);
+                });
+            }
+            ret.push(rmap[res].uri);
+        }
+        return ret;
+    }
+
+    function getArrayResources(resArr){
+        const ret=[]
+        resArr.forEach(res=>{
+            let reses = getResources(res);
+            ret.push(...reses);
+        });
+        return ret;
+    }
+
     app.use((ctx, next) => {
         // 静态资源
 
@@ -41,16 +68,7 @@ module.exports = ({
                 }
             }),
             comboCss: createFrozenProperty(() => {
-                return ctx.__resource.css.map(css => {
-                    const appName = css.split('/')[0];
-                    const rmap = require(path.join(opts.appDir, appName,
-                        'resource-map'));
-                    if (rmap[css]) {
-                        return rmap[css].uri;
-                    } else {
-                        return css;
-                    }
-                });
+                return getArrayResources(ctx.__resource.css)
             }),
             addScript: createFrozenProperty(jsModule => {
                 if (ctx.__resource.script.indexOf(jsModule) === -1) {
@@ -58,16 +76,7 @@ module.exports = ({
                 }
             }),
             comboScript: createFrozenProperty(() => {
-                return ctx.__resource.script.map(css => {
-                    const appName = css.split('/')[0];
-                    const rmap = require(path.join(opts.appDir, appName,
-                        'resource-map'));
-                    if (rmap[css]) {
-                        return rmap[css].uri;
-                    } else {
-                        return css;
-                    }
-                });
+                return getArrayResources(ctx.__resource.script);
             }),
             addJs: createFrozenProperty(jsModule => {
                 if (ctx.__resource.js.indexOf(jsModule) === -1) {
@@ -75,16 +84,7 @@ module.exports = ({
                 }
             }),
             comboJs: createFrozenProperty(() => {
-                return ctx.__resource.js.map(css => {
-                    const appName = css.split('/')[0];
-                    const rmap = require(path.join(opts.appDir, appName,
-                        'resource-map'));
-                    if (rmap[css]) {
-                        return rmap[css].uri;
-                    } else {
-                        return css;
-                    }
-                });
+                return getArrayResources(ctx.__resource.js);
             }),
             add: createFrozenProperty(mpath => {
                 const modulePath = mpath.toLowerCase();

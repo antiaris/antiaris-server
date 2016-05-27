@@ -35,7 +35,7 @@ module.exports = router => {
         addScript('demo/static/lib/system-register-only.js')
 
         const ret = ReactDOMServer.renderToString(React.createElement(Nav, {
-            title: "Hello",
+            text: "Hello",
             add
         }));
         ctx.body = env.render('skeleton.tpl', {

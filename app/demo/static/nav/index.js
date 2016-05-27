@@ -11,20 +11,28 @@
  */
 
 
-System.register('demo/component/nav', ['demo/component/base'], function (Base) {
+System.register('demo/component/nav', ['demo/component/base'], function (_export) {
 
-    class Nav extends Base {
-        constructor(props) {
-            super(props, 'Nav');
+    var Base;
+    return {
+        setters: [function (_) {
+            Base = _.Base;
+        }],
+        execute: function () {
+            class Nav extends Base {
+                constructor(props) {
+                    super(props, 'Nav');
+                }
+                render() {
+                    return React.createElement(
+                        "div", {
+                            className: "nav"
+                        },
+                        (this.props.text || "Nav")
+                    );
+                }
+            }
+            _export('Nav', Nav);
         }
-        render() {
-            return React.createElement(
-                "div", {
-                    className: "nav"
-                },
-                "Nav"
-            );
-        }
-    }
-    return Nav;
+    };
 });

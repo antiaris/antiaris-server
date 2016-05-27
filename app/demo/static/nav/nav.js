@@ -9,7 +9,13 @@
  * @version 1.0.0
  * @since 1.0.0
  */
-System.import('demo/component/nav').then(function (Nav) {
+
+Promise.all([System.import('demo/component/nav'), System.import('lib/static/react'), System.import(
+    'lib/static/react-dom')]).then(function ([nav, react, reactDOM]) {
+    const Nav = nav.Nav;
+    const React = react.React;
+    const ReactDOM = reactDOM.ReactDOM;
+    ReactDOM.render(React.createElement(Nav, {text: 'Nav'}), document.querySelector('#react-dom'));
 }, function (e) {
     console.error('FATAL:', e);
 });

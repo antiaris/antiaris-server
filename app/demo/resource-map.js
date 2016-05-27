@@ -17,11 +17,15 @@ module.exports = {
     },
     'demo/component/nav/nav.js': {
         uri: 'demo/static/nav/nav.js',
-        deps: []
+        deps: ['lib/static/react-dom.js']
     },
     'demo/component/nav/index.js': {
         uri: 'demo/static/nav/index.js',
-        deps: []
+        deps: ['demo/component/base/index.js']
+    },
+    'demo/component/base/index.js': {
+        uri: 'demo/static/base/index.js',
+        deps: ['lib/static/antiaris-component.js']
     },
     'demo/static/lib/system-register-only.js': {
         uri: 'demo/static/lib/system-register-only.js',
