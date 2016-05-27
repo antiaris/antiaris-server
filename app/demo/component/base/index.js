@@ -9,7 +9,7 @@
   * @version 1.0.0
   * @since 1.0.0
   */
-const AntiarisComponent = require('../../../../antiaris');
+const AntiarisComponent = require('antiaris-component');
 
 class Base extends AntiarisComponent {
     constructor(props, displayName) {

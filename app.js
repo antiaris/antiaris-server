@@ -9,9 +9,9 @@
  * @version 1.0.0
  * @since 1.0.0
  */
-require('babel-core/register')({
-    presets: [/*'es2015-node5', 'stage-3',*/ 'react']
-});
+//require('babel-core/register')({
+    //presets: [/*'es2015-node5', 'stage-3',*/ 'react']
+//});
 
 const path = require('path');
 const antiaris = require('./kernel/');
