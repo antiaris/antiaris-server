@@ -31,6 +31,8 @@ class Antiaris extends EventEmitter {
             app
         } = opts;
 
+        this.opts = opts;
+
         // Prevent from remove or reset
         Object.defineProperty(this, 'app', {
             enumerable: true,

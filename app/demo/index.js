@@ -28,7 +28,12 @@ module.exports = router => {
     });
 
     router.get('/isomorphic', (ctx, next) => {
-        const {add} = ctx;
+        const {
+            add,
+            addScript
+        } = ctx;
+        addScript('demo/static/lib/system-register-only.js')
+
         const ret = ReactDOMServer.renderToString(React.createElement(Nav, {
             title: "Hello",
             add

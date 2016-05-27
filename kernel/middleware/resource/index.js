@@ -11,6 +11,8 @@
  */
 'use strict';
 
+const path = require('path');
+
 const createFrozenProperty = value => {
     return {
         value,
@@ -20,7 +22,10 @@ const createFrozenProperty = value => {
     }
 };
 
-module.exports = ({app}) => {
+module.exports = ({
+    app,
+    opts
+}) => {
     app.use((ctx, next) => {
         // 静态资源
 
@@ -36,7 +41,16 @@ module.exports = ({app}) => {
                 }
             }),
             comboCss: createFrozenProperty(() => {
-                return ctx.__resource.css;
+                return ctx.__resource.css.map(css => {
+                    const appName = css.split('/')[0];
+                    const rmap = require(path.join(opts.appDir, appName,
+                        'resource-map'));
+                    if (rmap[css]) {
+                        return rmap[css].uri;
+                    } else {
+                        return css;
+                    }
+                });
             }),
             addScript: createFrozenProperty(jsModule => {
                 if (ctx.__resource.script.indexOf(jsModule) === -1) {
@@ -44,7 +58,16 @@ module.exports = ({app}) => {
                 }
             }),
             comboScript: createFrozenProperty(() => {
-                return ctx.__resource.script;
+                return ctx.__resource.script.map(css => {
+                    const appName = css.split('/')[0];
+                    const rmap = require(path.join(opts.appDir, appName,
+                        'resource-map'));
+                    if (rmap[css]) {
+                        return rmap[css].uri;
+                    } else {
+                        return css;
+                    }
+                });
             }),
             addJs: createFrozenProperty(jsModule => {
                 if (ctx.__resource.js.indexOf(jsModule) === -1) {
@@ -52,10 +75,19 @@ module.exports = ({app}) => {
                 }
             }),
             comboJs: createFrozenProperty(() => {
-                return ctx.__resource.js;
+                return ctx.__resource.js.map(css => {
+                    const appName = css.split('/')[0];
+                    const rmap = require(path.join(opts.appDir, appName,
+                        'resource-map'));
+                    if (rmap[css]) {
+                        return rmap[css].uri;
+                    } else {
+                        return css;
+                    }
+                });
             }),
-            add: createFrozenProperty(path => {
-                const modulePath = path.toLowerCase();
+            add: createFrozenProperty(mpath => {
+                const modulePath = mpath.toLowerCase();
                 const arr = modulePath.split('/');
                 const moduleName = arr[arr.length - 1];
                 ctx.addCss(`${modulePath}/${moduleName}.css`);
