@@ -12,9 +12,11 @@
 'use strict';
 const url = require('url');
 
-module.exports = (ctx, next) => {
-    const appName = url.parse(ctx.request.url).pathname.replace(/(^\/|\/$)/m, '').split(/\//)[0];
-    // 应用名
-    ctx.__appName = appName;
-    return next();
+module.exports = ({app}) => {
+    app.use((ctx, next) => {
+        const appName = url.parse(ctx.request.url).pathname.replace(/(^\/|\/$)/m, '').split(/\//)[0];
+        // 应用名
+        ctx.__appName = appName;
+        return next();
+    });
 };

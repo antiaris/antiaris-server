@@ -9,7 +9,6 @@
  * @version 1.0.0
  * @since 1.0.0
  */
-const React = require('react');
 
 class AntiarisComponent extends React.Component {
     constructor(props, appName, displayName) {

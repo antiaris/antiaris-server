@@ -9,7 +9,6 @@
   * @version 1.0.0
   * @since 1.0.0
   */
-const React = require('react');
 const AntiarisComponent = require('../../../../antiaris');
 
 class Base extends AntiarisComponent {

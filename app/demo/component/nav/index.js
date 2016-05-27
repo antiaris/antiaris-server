@@ -10,7 +10,6 @@
   * @since 1.0.0
   */
 const Base = require('../base/');
-const React = require('react');
 
 class Nav extends Base {
     constructor(props) {

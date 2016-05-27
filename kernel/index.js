@@ -45,15 +45,15 @@ class Antiaris extends EventEmitter {
         const loadCustomMiddleWare = midPath => {
             const stat = fs.statSync(midPath);
             if (stat.isDirectory() && fs.existsSync(path.join(midPath, 'index.js'))) {
-                this.app.use(require(midPath));
+                require(midPath)(this);
             }
         };
 
         // 加载 middleware，由内核定义
         const kernelMiddleDir = path.join(__dirname, 'middleware');
         fs.readdirSync(kernelMiddleDir).forEach(dir => {
-           loadCustomMiddleWare(path.join(kernelMiddleDir, dir));
-            
+            loadCustomMiddleWare(path.join(kernelMiddleDir, dir));
+
         });
 
         // 加载 middleware，由框架定义
