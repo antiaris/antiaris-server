@@ -70,9 +70,9 @@ class Antiaris extends EventEmitter {
             const subPath = path.join(appDir, dir);
             const stat = fs.statSync(subPath);
             const appName = path.basename(subPath);
-            if (stat.isDirectory() && fs.existsSync(path.join(subPath, 'index.js'))) {
+            if (stat.isDirectory() && fs.existsSync(path.join(subPath, 'src/router.js'))) {
                 const appRouter = new Router();
-                require(subPath)(appRouter);
+                require(path.join(subPath, 'src/router.js'))(appRouter);
                 rootRouter.use(`/${appName}`, appRouter.routes(), appRouter.allowedMethods());
             }
         });

@@ -29,9 +29,9 @@ module.exports = ({
 
     function getResources(res) {
         const ret = [];
-        const appName = res.split('/')[0];
+        const appName = res.split(':')[0];
         const rmap = require(path.join(opts.appDir, appName,
-            'resource-map'));
+            'resource-map.json'));
         if (rmap[res]) {
             if (Array.isArray(rmap[res].deps)) {
                 rmap[res].deps.forEach(r => {
@@ -44,9 +44,9 @@ module.exports = ({
         return ret;
     }
 
-    function getArrayResources(resArr){
-        const ret=[]
-        resArr.forEach(res=>{
+    function getArrayResources(resArr) {
+        const ret = []
+        resArr.forEach(res => {
             let reses = getResources(res);
             ret.push(...reses);
         });
@@ -88,11 +88,14 @@ module.exports = ({
             }),
             add: createFrozenProperty(mpath => {
                 const modulePath = mpath.toLowerCase();
-                const arr = modulePath.split('/');
-                const moduleName = arr[arr.length - 1];
-                ctx.addCss(`${modulePath}/${moduleName}.css`);
-                ctx.addJs(`${modulePath}/${moduleName}.js`);
-                ctx.addScript(`${modulePath}/index.js`);
+                let arr = modulePath.split(':');
+                const moduleName = arr[1];
+                const appName = arr[0];
+                arr = moduleName.split('/');
+                const componentName = arr[arr.length - 1];
+                ctx.addCss(`${modulePath}/${componentName}.css`);
+                ctx.addJs(`${modulePath}/${componentName}-js.js`);
+                ctx.addScript(`${modulePath}/${componentName}-script.js`);
             })
         });
 
