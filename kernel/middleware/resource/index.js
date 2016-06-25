@@ -94,6 +94,7 @@ module.exports = ({
                 arr = moduleName.split('/');
                 const componentName = arr[arr.length - 1];
                 ctx.addCss(`${modulePath}/${componentName}.css`);
+                ctx.addCss(`${modulePath}/${componentName}.less`);
                 ctx.addJs(`${modulePath}/${componentName}-js.js`);
                 ctx.addScript(`${modulePath}/${componentName}-script.js`);
             })

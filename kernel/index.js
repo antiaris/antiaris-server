@@ -44,6 +44,26 @@ class Antiaris extends EventEmitter {
         this.app.use(favicon(path.join(confDir, 'favicon.ico')));
         this.app.use(serveStatic(appDir));
 
+        const staticRouter = new Router();
+
+        staticRouter.get('/s', (ctx, next) => {
+            const files = ctx.request.querystring.split(',');
+            const tasks = files.map(file => new Promise(resolve => {
+                fs.readFile(path.join(appDir, 'static', file), 'utf-8', (err, content) => {
+                    resolve(err ? '' : content);
+                });
+            }));
+            return Promise.all(tasks).then(contents => {
+                const contentType = /css/.test(ctx.request.headers['accept']) ? 'text/css' :
+                    'text/javascript';
+                ctx.response.set('content-type', contentType);
+                ctx.body = contents.reduce((s1, s2) => (s1 + s2));
+            });
+        });
+
+        this.app.use(staticRouter.routes());
+
+
         const loadCustomMiddleWare = midPath => {
             const stat = fs.statSync(midPath);
             if (stat.isDirectory() && fs.existsSync(path.join(midPath, 'index.js'))) {
