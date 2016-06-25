@@ -9,16 +9,24 @@
  * @version 1.0.0
  * @since 1.0.0
  */
-//require('babel-core/register')({
-    //presets: [/*'es2015-node5', 'stage-3',*/ 'react']
-//});
+'use strict';
+
 require("babel-polyfill");
 const path = require('path');
 const antiaris = require('./kernel/');
 const conf = require('./conf/');
+const fs = require('fs');
+const mkdirp = require('mkdirp');
+
+const appDir = path.join(__dirname, 'app');
+
+
+if (!fs.existsSync(appDir)) {
+    mkdirp.sync(appDir);
+}
 
 const app = antiaris.bootstrap({
-    appDir: path.join(__dirname, 'app'),
+    appDir,
     confDir: path.join(__dirname, 'conf'),
     middlewareDir: path.join(__dirname, 'middleware')
 });
