@@ -12,6 +12,7 @@
 'use strict';
 
 const path = require('path');
+const uniq = require('lodash/uniq');
 
 const createFrozenProperty = value => {
     return {
@@ -68,7 +69,7 @@ module.exports = ({
                 }
             }),
             comboCss: createFrozenProperty(() => {
-                return getArrayResources(ctx.__resource.css)
+                return uniq(getArrayResources(ctx.__resource.css))
             }),
             addScript: createFrozenProperty(jsModule => {
                 if (ctx.__resource.script.indexOf(jsModule) === -1) {
@@ -76,7 +77,7 @@ module.exports = ({
                 }
             }),
             comboScript: createFrozenProperty(() => {
-                return getArrayResources(ctx.__resource.script);
+                return uniq(getArrayResources(ctx.__resource.script));
             }),
             addJs: createFrozenProperty(jsModule => {
                 if (ctx.__resource.js.indexOf(jsModule) === -1) {
@@ -84,7 +85,7 @@ module.exports = ({
                 }
             }),
             comboJs: createFrozenProperty(() => {
-                return getArrayResources(ctx.__resource.js);
+                return uniq(getArrayResources(ctx.__resource.js));
             }),
             add: createFrozenProperty(mpath => {
                 const modulePath = mpath.toLowerCase();
