@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 yanni4night.com
+ * Copyright (C) 2016 antiaris.xyz
  * app.js
  *
  * changelog
@@ -27,6 +27,7 @@ if (!fs.existsSync(appDir)) {
 
 const app = antiaris.bootstrap({
     appDir,
+    conf,
     confDir: path.join(__dirname, 'conf'),
     middlewareDir: path.join(__dirname, 'middleware')
 });

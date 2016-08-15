@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 yanni4night.com
+ * Copyright (C) 2016 antiaris.xyz
  * index.js
  *
  * changelog
@@ -13,25 +13,32 @@
 
 const path = require('path');
 const uniq = require('lodash/uniq');
-
-const createFrozenProperty = value => {
-    return {
-        value,
-        writable: false,
-        enumerable: true,
-        configurable: false
-    }
-};
+const defineFrozenProperty = require('define-frozen-property');
 
 module.exports = ({
     app,
     opts
 }) => {
+    const {
+        appDir,
+        conf
+    } = opts;
+
+    function getSingleResource(res) {
+        const ret = [];
+        const appName = res.split(':')[0];
+        const rmap = require(path.join(appDir, appName,
+            'resource-map.json'));
+        if (rmap[res]) {
+            return rmap[res].uri;
+        }
+        return null;
+    }
 
     function getResources(res) {
         const ret = [];
         const appName = res.split(':')[0];
-        const rmap = require(path.join(opts.appDir, appName,
+        const rmap = require(path.join(appDir, appName,
             'resource-map.json'));
         if (rmap[res]) {
             if (Array.isArray(rmap[res].deps)) {
@@ -55,50 +62,59 @@ module.exports = ({
     }
 
     app.use((ctx, next) => {
-        // 静态资源
+        const styles = [];
+        const scripts = [];
 
-        Object.defineProperties(ctx, {
-            '__resource': createFrozenProperty({
-                css: [],
-                script: [],
-                js: []
-            }),
-            addCss: createFrozenProperty(cssModule => {
-                if (ctx.__resource.css.indexOf(cssModule) === -1) {
-                    ctx.__resource.css.push(cssModule);
+        defineFrozenProperty(ctx, 'comboScript', () => {
+            const jsArray = uniq(scripts.map(getSingleResource));
+            return `<script src="${conf.URL.STATIC_PREFIX}?${jsArray.join()}"></script>`;
+        });
+
+        defineFrozenProperty(ctx, 'comboStyle', () => {
+
+            const jsArray = uniq(styles.concat(getArrayResources(styles)));
+
+            const cssArray = [];
+
+            jsArray.forEach(js => {
+                const base = path.basename(js);
+                const dir = path.dirname(js);
+
+                const css = getSingleResource(path.join(dir, base + '.less')) ||
+                    getSingleResource(path.join(dir, base + '.css'));
+                if (css) {
+                    cssArray.push(css);
                 }
-            }),
-            comboCss: createFrozenProperty(() => {
-                return uniq(getArrayResources(ctx.__resource.css))
-            }),
-            addScript: createFrozenProperty(jsModule => {
-                if (ctx.__resource.script.indexOf(jsModule) === -1) {
-                    ctx.__resource.script.push(jsModule);
-                }
-            }),
-            comboScript: createFrozenProperty(() => {
-                return uniq(getArrayResources(ctx.__resource.script));
-            }),
-            addJs: createFrozenProperty(jsModule => {
-                if (ctx.__resource.js.indexOf(jsModule) === -1) {
-                    ctx.__resource.js.push(jsModule);
-                }
-            }),
-            comboJs: createFrozenProperty(() => {
-                return uniq(getArrayResources(ctx.__resource.js));
-            }),
-            add: createFrozenProperty(mpath => {
-                const modulePath = mpath.toLowerCase();
-                let arr = modulePath.split(':');
-                const moduleName = arr[1];
-                const appName = arr[0];
-                arr = moduleName.split('/');
-                const componentName = arr[arr.length - 1];
-                ctx.addCss(`${modulePath}/${componentName}.css`);
-                ctx.addCss(`${modulePath}/${componentName}.less`);
-                ctx.addJs(`${modulePath}/${componentName}-js.js`);
-                ctx.addScript(`${modulePath}/${componentName}-script.js`);
-            })
+            });
+
+            return `<link rel="stylesheet" href="${conf.URL.STATIC_PREFIX}?${cssArray.join()}" />`;
+        });
+
+        defineFrozenProperty(ctx, 'comboJs', () => {
+            const jsArray = uniq(getArrayResources(scripts));
+            return `<script src="${conf.URL.STATIC_PREFIX}?${jsArray.join()}"></script>`;
+        });
+
+        defineFrozenProperty(ctx, 'getStyle', mpath => {
+            const style = getSingleResource(mpath);
+            return `<link rel="stylesheet" href="${conf.URL.STATIC_PREFIX}?${style}"/>`;
+        });
+
+        defineFrozenProperty(ctx, 'addStyle', mpath => {
+            if (styles.indexOf(mpath) === -1) {
+                styles.push(mpath);
+            }
+        });
+
+        defineFrozenProperty(ctx, 'getScript', mpath => {
+            const script = getSingleResource(mpath);
+            return `<script src="${conf.URL.STATIC_PREFIX}?${script}"></script>`;
+        });
+
+        defineFrozenProperty(ctx, 'addScript', mpath => {
+            if (scripts.indexOf(mpath) === -1) {
+                scripts.push(mpath);
+            }
         });
 
         return next();

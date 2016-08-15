@@ -32,8 +32,8 @@
     "nunjucks": "^2.4.2"
   },
   "dependencies": {
-    "antiaris-component": "^1.0.0",
     "babel-polyfill": "^6.9.1",
+    "define-frozen-property": "^0.1.0",
     "koa": "^2.0.0",
     "koa-favicon": "^2.0.0",
     "koa-router": "^7.0.1",

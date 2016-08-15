@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 yanni4night.com
+ * Copyright (C) 2016 antiaris.xyz
  * index.js
  *
  * changelog
@@ -10,7 +10,10 @@
  * @since 1.0.0
  */
 const conf = {
-    PORT: 4098
+    PORT: 4098,
+    URL: {
+        STATIC_PREFIX: '/s?'
+    }
 };
 
 Object.freeze(conf);

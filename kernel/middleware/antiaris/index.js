@@ -1,5 +1,5 @@
 /**
-  * Copyright (C) 2016 tieba.baidu.com
+  * Copyright (C) 2016 antiaris.xyz
   * index.js
   *
   * changelog

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016 tieba.baidu.com
+ * Copyright (C) 2016 antiaris.xyz
  * index.js
  *
  * changelog
@@ -20,6 +20,7 @@ const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const EventEmitter = require('events');
+const defineFrozenProperty = require('define-frozen-property');
 
 class Antiaris extends EventEmitter {
     bootstrap(options) {
@@ -33,36 +34,10 @@ class Antiaris extends EventEmitter {
 
         this.opts = opts;
 
-        // Prevent from remove or reset
-        Object.defineProperty(this, 'app', {
-            enumerable: true,
-            writable: false,
-            configurable: false,
-            value: app || new Koa()
-        });
+        defineFrozenProperty(this, 'app', (app || new Koa()), true);
 
         this.app.use(favicon(path.join(confDir, 'favicon.ico')));
         this.app.use(serveStatic(appDir));
-
-        const staticRouter = new Router();
-
-        staticRouter.get('/s', (ctx, next) => {
-            const files = ctx.request.querystring.split(',');
-            const tasks = files.map(file => new Promise(resolve => {
-                fs.readFile(path.join(appDir, 'static', file), 'utf-8', (err, content) => {
-                    resolve(err ? '' : content);
-                });
-            }));
-            return Promise.all(tasks).then(contents => {
-                const contentType = /css/.test(ctx.request.headers['accept']) ? 'text/css' :
-                    'text/javascript';
-                ctx.response.set('content-type', contentType);
-                ctx.body = contents.reduce((s1, s2) => (s1 + s2));
-            });
-        });
-
-        this.app.use(staticRouter.routes());
-
 
         const loadCustomMiddleWare = midPath => {
             const stat = fs.statSync(midPath);
