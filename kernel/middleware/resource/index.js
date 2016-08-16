@@ -61,38 +61,53 @@ module.exports = ({
         return ret;
     }
 
+    function getResourceUris(resArr) {
+        const ret = []
+        resArr.forEach(res => {
+            const appName = res.split(':')[0];
+            const rmap = require(path.join(appDir, appName,
+                'resource-map.json'));
+            if (rmap[res] && rmap[res].uri) {
+                ret.push(rmap[res].uri);
+            }
+        });
+        return ret;
+    }
+
+    function getRecusiveResource(resArr) {
+        const ret = []
+        resArr.forEach(res => {
+            const appName = res.split(':')[0];
+            const rmap = require(path.join(appDir, appName,
+                'resource-map.json'));
+            if (rmap[res]) {
+                if (Array.isArray(rmap[res].deps)) {
+                    const deps = getRecusiveResource(rmap[res].deps);
+                    ret.push(...deps);
+                    ret.push(...rmap[res].deps);
+                }
+            }
+        });
+        ret.push(...resArr);
+        return uniq(ret);
+    }
+
     app.use((ctx, next) => {
         const styles = [];
         const scripts = [];
 
         defineFrozenProperty(ctx, 'comboScript', () => {
-            const jsArray = uniq(scripts.map(getSingleResource));
+            const jsArray = getResourceUris(getRecusiveResource(scripts));
             return `<script src="${conf.URL.STATIC_PREFIX}?${jsArray.join()}"></script>`;
         });
 
         defineFrozenProperty(ctx, 'comboStyle', () => {
-
-            const jsArray = uniq(styles.concat(getArrayResources(styles)));
-
-            const cssArray = [];
-
-            jsArray.forEach(js => {
-                const base = path.basename(js);
-                const dir = path.dirname(js);
-
-                const css = getSingleResource(path.join(dir, base + '.less')) ||
-                    getSingleResource(path.join(dir, base + '.css'));
-                if (css) {
-                    cssArray.push(css);
-                }
+            const jsArray = getRecusiveResource(scripts);
+            let cssArray = jsArray.map(js=>{
+                return js.replace(/\.jsx?$/i,'.less');
             });
-
+            cssArray = getResourceUris(cssArray);
             return `<link rel="stylesheet" href="${conf.URL.STATIC_PREFIX}?${cssArray.join()}" />`;
-        });
-
-        defineFrozenProperty(ctx, 'comboJs', () => {
-            const jsArray = uniq(getArrayResources(scripts));
-            return `<script src="${conf.URL.STATIC_PREFIX}?${jsArray.join()}"></script>`;
         });
 
         defineFrozenProperty(ctx, 'getStyle', mpath => {

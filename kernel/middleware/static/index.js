@@ -12,6 +12,8 @@
 'use strict';
 
 const Router = require('koa-router');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = ({app, opts}) => {
     const {
@@ -21,7 +23,7 @@ module.exports = ({app, opts}) => {
     const staticRouter = new Router();
 
     staticRouter.get('/s', (ctx, next) => {
-        const files = ctx.request.querystring.split(',');
+        const files = ctx.request.querystring.replace(/^\?*/, '').split(',');
         const tasks = files.map(file => new Promise(resolve => {
             fs.readFile(path.join(appDir, 'static', file), 'utf-8', (err, content) => {
                 resolve(err ? '' : content);
