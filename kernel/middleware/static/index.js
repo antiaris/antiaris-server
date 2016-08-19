@@ -23,7 +23,7 @@ module.exports = ({app, opts}) => {
     const staticRouter = new Router();
 
     staticRouter.get('/s', (ctx, next) => {
-        const files = ctx.request.querystring.replace(/^\?*/, '').split(',');
+        const files = ctx.request.query.m.replace(/^\?*/, '').split(',');
         const tasks = files.map(file => new Promise(resolve => {
             fs.readFile(path.join(appDir, 'static', file), 'utf-8', (err, content) => {
                 resolve(err ? '' : content);

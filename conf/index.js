@@ -12,7 +12,7 @@
 const conf = {
     PORT: 4098,
     URL: {
-        STATIC_PREFIX: '/s?'
+        STATIC_PREFIX: '/s?m='
     }
 };
 

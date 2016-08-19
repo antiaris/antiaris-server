@@ -37,7 +37,7 @@ class Antiaris extends EventEmitter {
         defineFrozenProperty(this, 'app', (app || new Koa()), true);
 
         this.app.use(favicon(path.join(confDir, 'favicon.ico')));
-        this.app.use(serveStatic(appDir));
+        this.app.use(serveStatic(path.join(appDir, 'static')));
 
         const loadCustomMiddleWare = midPath => {
             const stat = fs.statSync(midPath);

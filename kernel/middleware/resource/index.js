@@ -98,7 +98,7 @@ module.exports = ({
 
         defineFrozenProperty(ctx, 'comboScript', () => {
             const jsArray = getResourceUris(getRecusiveResource(scripts));
-            return `<script src="${conf.URL.STATIC_PREFIX}?${jsArray.join()}"></script>`;
+            return `<script src="${conf.URL.STATIC_PREFIX}${jsArray.join()}"></script>`;
         });
 
         defineFrozenProperty(ctx, 'comboStyle', () => {
@@ -107,12 +107,12 @@ module.exports = ({
                 return js.replace(/\.jsx?$/i,'.less');
             });
             cssArray = getResourceUris(cssArray);
-            return `<link rel="stylesheet" href="${conf.URL.STATIC_PREFIX}?${cssArray.join()}" />`;
+            return `<link rel="stylesheet" href="${conf.URL.STATIC_PREFIX}${cssArray.join()}" />`;
         });
 
         defineFrozenProperty(ctx, 'getStyle', mpath => {
             const style = getSingleResource(mpath);
-            return `<link rel="stylesheet" href="${conf.URL.STATIC_PREFIX}?${style}"/>`;
+            return `<link rel="stylesheet" href="${conf.URL.STATIC_PREFIX}${style}"/>`;
         });
 
         defineFrozenProperty(ctx, 'addStyle', mpath => {
