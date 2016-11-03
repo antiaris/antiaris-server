@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "define-frozen-property": "^0.1.0",
-    "koa": "^2.0.0",
+    "koa": "^2.0.0-alpha.7",
     "koa-favicon": "^2.0.0",
     "koa-router": "^7.0.1",
     "koa-static": "^3.0.0",
