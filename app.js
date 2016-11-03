@@ -11,7 +11,6 @@
  */
 'use strict';
 
-require("babel-polyfill");
 const path = require('path');
 const antiaris = require('./kernel/');
 const conf = require('./conf/');
